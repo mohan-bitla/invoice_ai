@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+system "gem install foreman" unless system "gem list -i foreman"
+exec "foreman start -f Procfile.dev"
