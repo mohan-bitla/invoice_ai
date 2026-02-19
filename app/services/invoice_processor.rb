@@ -8,7 +8,7 @@ class InvoiceProcessor
   end
 
   def process(invoice)
-    invoice.update!(status: 'extracting', processed_at: Time.current)
+    invoice.update!(status: "extracting", processed_at: Time.current)
 
     start_time = Time.current
 
@@ -58,52 +58,52 @@ class InvoiceProcessor
       ActiveRecord::Base.transaction do
         # Update Invoice
         invoice.update!(
-          vendor_name: data['Vendor Name'],
-          invoice_number: data['Invoice Number'],
-          invoice_date: data['Invoice Date'],
-          due_date: data['Due Date'],
-          total_amount: data['Total Amount'],
-          currency: data['Currency'],
+          vendor_name: data["Vendor Name"],
+          invoice_number: data["Invoice Number"],
+          invoice_date: data["Invoice Date"],
+          due_date: data["Due Date"],
+          total_amount: data["Total Amount"],
+          currency: data["Currency"],
           extracted_data: data,
-          status: 'extracted'
+          status: "extracted"
         )
 
         # Create Line Items
-        data['Line Items']&.each do |item|
+        data["Line Items"]&.each do |item|
           invoice.invoice_lines.create!(
-            description: item['Description'],
-            quantity: item['Quantity'],
-            unit_price: item['Unit Price'],
-            line_total: item['Total'],
-            sku: item['SKU']
+            description: item["Description"],
+            quantity: item["Quantity"],
+            unit_price: item["Unit Price"],
+            line_total: item["Total"],
+            sku: item["SKU"]
           )
         end
 
         # Create Extraction Record
         Extraction.create!(
           invoice: invoice,
-          ai_model: 'gpt-4o-mock',
+          ai_model: "gpt-4o-mock",
           raw_prompt: prompt,
           raw_response: data,
-          status: 'completed',
+          status: "completed",
           duration_ms: duration,
           confidence: 0.95 # Mock
         )
       end
     else
-      invoice.update!(status: 'error')
+      invoice.update!(status: "error")
       Extraction.create!(
         invoice: invoice,
-        status: 'failed',
+        status: "failed",
         error_message: "Failed to get response from AI"
       )
     end
 
   rescue StandardError => e
-    invoice.update!(status: 'error', notes: e.message)
+    invoice.update!(status: "error", notes: e.message)
     Extraction.create!(
       invoice: invoice,
-      status: 'failed',
+      status: "failed",
       error_message: e.message
     )
     raise e

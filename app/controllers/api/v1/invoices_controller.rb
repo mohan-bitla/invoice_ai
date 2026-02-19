@@ -15,7 +15,7 @@ module Api
 
         # Determine account (mock for now or from header)
         # We need a default account since we don't have auth yet.
-        account = Account.first_or_create!(name: 'Demo Account')
+        account = Account.first_or_create!(name: "Demo Account")
 
         invoice = account.invoices.new(invoice_params)
 

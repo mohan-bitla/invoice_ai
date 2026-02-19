@@ -3,7 +3,7 @@ class ProcessInvoiceJob < ApplicationJob
 
   def perform(invoice_id)
     invoice = Invoice.find(invoice_id)
-    return unless invoice.status == 'uploaded'
+    return unless invoice.status == "uploaded"
 
     InvoiceProcessor.new.process(invoice)
   end
